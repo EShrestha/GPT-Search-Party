@@ -1,17 +1,25 @@
-document.addEventListener('keydown', function(event) {
-    // Check if both Ctrl and Enter keys are pressed
-    if (event.ctrlKey && event.key === 'Enter') {
-        // Get the focused input
-        const activeElement = document.activeElement;
-        
-        if (activeElement.id === 'default-search') {
-            // Handle default search
-            const searchQuery = activeElement.value;
-            window.open(`https://www.google.com/search?q=${encodeURIComponent(searchQuery)}`, '_blank');
-        } else if (activeElement.id === 'custom-search') {
-            // Handle ChatGPT search
-            const searchQuery = activeElement.value;
-            window.open(`https://chat.openai.com/`, '_blank');
-        }
+// Handle initial installation
+chrome.runtime.onInstalled.addListener(() => {
+    // Override new tab page
+    chrome.storage.local.set({ 'override': true });
+});
+
+// Override Chrome's new tab page
+chrome.tabs.onCreated.addListener((tab) => {
+    if (tab.url === 'chrome://newtab/') {
+        chrome.tabs.update(tab.id, {
+            url: 'searchparty.html'
+        });
     }
 });
+
+// Handle extension icon click
+chrome.action.onClicked.addListener(() => {
+    chrome.tabs.create({
+        url: 'searchparty.html'
+    });
+});
+
+
+
+

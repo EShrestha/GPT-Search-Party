@@ -5,6 +5,7 @@ html, body {
     height: 100%;
     width: 100%;
     box-sizing: border-box;
+    user-select: none;
 }
 
 .container {
@@ -65,10 +66,12 @@ h1 {
 input[type="text"] {
     width: 60%;
     padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
     background-color: #3c3c3c;
     color: #d4d4d4;
+}
+
+input::placeholder{
+    text-align: center;
 }
 
 input.input {
@@ -81,6 +84,7 @@ input.input {
     box-shadow: none;
     position: relative;
     z-index: 1;
+    border: none;
 }
 
 input.input:hover,
@@ -91,13 +95,18 @@ input.input:focus {
     z-index: 2;
 }
 
-#default-search {
-    border-top-left-radius: 15px;
-    border-bottom-left-radius: 15px;
+#left-search {
+    border-top-left-radius: 30px;
+    border-bottom-left-radius: 30px;
 }
 
-#custom-search {
-    border-top-right-radius: 15px;
-    border-bottom-right-radius: 15px;
+#right-search {
+    border-top-right-radius: 30px;
+    border-bottom-right-radius: 30px;
 }
+
+
+
+
+
 

@@ -1,45 +1,29 @@
 <!DOCTYPE html>
 <html lang="en">
 
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <meta name="description" content="Search Party - A powerful search interface">
-        <meta http-equiv="Content-Security-Policy" content="default-src 'self'">
-        <title>Search Party</title>
-        <link rel="stylesheet" href="searchparty.css">
-        <link rel="icon" type="image/x-icon" href="favicon.ico">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search Party</title>
+    <link rel="stylesheet" href="searchparty.css">
+</head>
 
-    </head>
+<body>
+    <main class="container">
+        <div class="logo-container">
+            <h1 class="logo-text">🔍🎉</h1>
+            <p class="byline">by Airdik</p>
+        </div>
+        <div class="search-container">
+            <input id="left-search" class="input" type="text" placeholder="Search with Google"
+                aria-label="Search with Google" autofocus>
+            <input id="right-search" class="input" type="text" placeholder="Search with ChatGPT"
+                aria-label="Search with ChatGPT">
+        </div>
+    </main>
 
-    <body>
-        <main class="container">
-            <div class="logo-container">
-                <h1 class="logo-text">Search Party</h1>
-                <p class="byline">by Airdik</p>
-            </div>
-            <div class="search-container">
-                <input 
-                    id="default-search" 
-                    class="input" 
-                    type="text" 
-                    placeholder="Search with Google"
-                    aria-label="Search with Google">
-                <input 
-                    id="custom-search" 
-                    class="input" 
-                    type="text" 
-                    placeholder="Search with ChatGPT"
-                    aria-label="Search with ChatGPT">
-            </div>
-        </main>
-        <script src="script.js" defer></script>
-        <script src="search-engine.js" defer></script>
-    </body>
+</body>
+<script src="search-engine.js" ></script>
+
 
 </html>
-
-
-
-
-

@@ -3,7 +3,7 @@
     "name": "SearchParty",
     "version": "1.0",
     "description": "SearchParty is a browser extension that allows you to search the web with multiple search engines.",
-    "permissions": ["tabs", "storage"],
+    "permissions": ["tabs", "storage", "activeTab"],
     "chrome_url_overrides": {
         "newtab": "searchparty.html"
     },
@@ -11,12 +11,12 @@
         "service_worker": "background.js"
     },
     "action": {
-        "default_title": "Search Party"
+        "default_title": "Search Party",
+        "default_popup": "popup.html"
     },
     "icons": {
         "16": "icon16.png",
         "48": "icon48.png",
         "128": "icon128.png"
-    },
-    "host_permissions": ["<all_urls>"]
+    }
 }
