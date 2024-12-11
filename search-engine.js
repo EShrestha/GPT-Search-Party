@@ -4,11 +4,43 @@ const rightSearchInput = document.getElementById("right-search");
 var termToSearch = "";
 
 //////// DEFAULT ITEMS ////////
-const searchEngines = [
+var searchEngines = [
   {
     name: "Google",
     url: "https://www.google.com/search?q=",
     shortcut: "//g",
+    position: 0,
+    isCustom: false,
+    isEnabled: false,
+  },
+  {
+    name: "Bing",
+    url: "https://www.bing.com/search?q=",
+    shortcut: "//b",
+    position: 0,
+    isCustom: false,
+    isEnabled: false,
+  },
+  {
+    name: "Yahoo",
+    url: "https://search.yahoo.com/search?p=",
+    shortcut: "//y",
+    position: 0,
+    isCustom: false,
+    isEnabled: false,
+  },
+  {
+    name: "Duck Duck Go",
+    url: "https://duckduckgo.com/?q=",
+    shortcut: "//d",
+    position: 0,
+    isCustom: false,
+    isEnabled: false,
+  },
+  {
+    name: "Yandex",
+    url: "https://yandex.com/search/?text=",
+    shortcut: "//ya",
     position: 0,
     isCustom: false,
     isEnabled: true,
@@ -17,6 +49,7 @@ const searchEngines = [
     name: "ChatGPT",
     url: "https://chat.openai.com/?q=",
     shortcut: "//gpt",
+    position: 1,
     isCustom: false,
     isEnabled: true,
   },
@@ -27,26 +60,33 @@ var currentRightSearch = searchEngines[1];
 
 // Get any custom search engines from the storage
 const getAndPushCustomSearchEngines = async () => {
-  const customSearchEngines = await chrome.storage.local.get("searchEngines");
-  searchEngines.push(...(customSearchEngines.customSearchEngines || []));
+    const customSearchEngines = await chrome.storage.local.get("searchEngines");
+    searchEngines = customSearchEngines.Engines || searchEngines;
 };
 
 const getPageReady = async () => {
   getAndPushCustomSearchEngines();
 
-  searchEngines.forEach((engine) => {
+    searchEngines.forEach((engine) => {
+      console.log("LOOKING AT ENGINE:", engine)
     if (engine.isEnabled) {
       if (engine.position === 0) {
-        currentLeftSearch = engine;
+          currentLeftSearch = engine;
+          updatePlaceholderText(0, "Search with " + engine.name)
+          console.log("LEFT", currentLeftSearch)
       } else {
-        currentRightSearch = engine;
+          currentRightSearch = engine;
+            updatePlaceholderText(1, "Search with " + engine.name)
+
+          console.log("RIGHT", currentRightSearch);
+          
       }
     }
   });
 };
 
 // Handles the tab switch between the two search inputs
-function handleTabSwitch(fromInput, toInput, fromDefaultPlaceholder, toDefaultPlaceholder, placeholderText) {
+function handleTabSwitch(fromInput, toInput, toDefaultPlaceholder, placeholderText) {
     //fromInput.placeholder = placeholderText;
     
     if (fromInput.value.trim() === "") {
@@ -62,9 +102,17 @@ function handleTabSwitch(fromInput, toInput, fromDefaultPlaceholder, toDefaultPl
     }
 }
 
+const updatePlaceholderText = (index, text) => {
+    if (index === 0) {
+        leftSearchInput.placeholder = text;
+    } else {
+        rightSearchInput.placeholder = text;
+    }
+}
+
 // Wait for the DOM to be fully loaded
 document.addEventListener("DOMContentLoaded", () => {
-  getAndPushCustomSearchEngines();
+  getPageReady();
 
   const searchInputs = [leftSearchInput, rightSearchInput];
   const searchUrls = [currentLeftSearch.url, currentRightSearch.url];
@@ -82,9 +130,6 @@ document.addEventListener("DOMContentLoaded", () => {
           handleTabSwitch(
             input,
             oppositeInputs[index],
-            index === 0
-              ? "Search with " + currentLeftSearch.name
-              : "Search with " + currentRightSearch.name,
             index === 0
               ? "Search with " + currentRightSearch.name
               : "Search with " + currentLeftSearch.name,
