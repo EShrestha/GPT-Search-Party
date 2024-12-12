@@ -6,133 +6,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Search Party</title>
     <link rel="stylesheet" href="searchparty.css">
+    <link rel="stylesheet" href="settings-info.css">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
-    <style>
-        /* Add this to prevent Bootstrap from overriding your existing styles */
-        .container {
-            max-width: 100%;
-            padding: 0;
-        }
-        .settings-icon {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            font-size: 18px;
-            cursor: pointer;
-        }
 
-
-        .modal-content {
-            padding: 10px;
-            width: 500px;
-            max-height: 600px;
-            overflow-y: auto;
-            background: #252526;
-        }
-
-        .shortcut-input {
-            background-color: #3c3c3c;
-            color: #d4d4d4;
-            border: 1px solid #555;
-            border-radius: 4px;
-        }
-
-        .advanced-settings {
-            border-top: 2px solid #555;
-        }
-
-        button {
-            background-color: #3c3c3c;
-            color: #d4d4d4;
-            border: 1px solid #555;
-            border-radius: 4px;
-            cursor: pointer;
-            display: flex;
-            flex-grow:1;
-            justify-content: center;
-        }
-
-        button:hover {
-            background-color: #4c4c4c;
-        }
-
-        .enabled-status {
-            color: #4ec9b0 !important; /* Using VS Code's green color */
-            margin-left: auto;
-        }
-
-        .section {
-            margin: 10px 0;
-        }
-        .search-engine-item {
-            display: flex;
-            flex-direction: column;
-            gap: 5px;
-            margin: 8px 0;
-            margin-bottom: 15px;;
-        }
-        .engine-row {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        .advanced-settings {
-            border-top: 1px solid #ccc;
-            padding-top: 10px;
-        }
-        .input-row {
-            display: flex;
-            gap: 5px;
-            margin: 5px 0;
-            justify-content: center;
-        }
-        .button-row {
-            display: flex;
-            gap: 5px;
-            justify-content: center;
-        }
-        h1 {
-            font-size: 16px;
-            margin: 5px 0;
-        }
-        h2 {
-            font-size: 16px;
-            margin: 5px 0;
-        }
-        .shortcut-input {
-            font-size: 12px;
-            padding: 2px;
-            max-width: 40px;
-        }
-        button {
-            font-size: 12px;
-            padding: 3px 8px;
-        }
-
-        label{
-            color: white;
-            font-size: 16px;
-        }
-
-        /* Custom scrollbar styles */
-        .modal-content::-webkit-scrollbar {
-            width: 4px;
-        }
-
-        .modal-content::-webkit-scrollbar-track {
-            background: #1e1e1e;
-            border-radius: 4px;
-        }
-
-        .modal-content::-webkit-scrollbar-thumb {
-            background: #4c4c4c;
-            border-radius: 4px;
-        }
-
-        .modal-content::-webkit-scrollbar-thumb:hover {
-            background: #555;
-        }
-    </style>
 </head>
 
 <body>
@@ -141,9 +17,15 @@
             <h1 class="logo-text">🔍🎉</h1>
             <p class="byline">by Airdik</p>
         </div>
-        <button type="button" class="settings-icon" data-toggle="modal" data-target="#settingsModal">
-            <i class="fas fa-cog"></i>
-        </button>
+        <div class="settings-info">
+
+            <span data-toggle="modal" data-target="#settingsModal">
+                ⚙️
+            </span>
+            <span  data-toggle="modal" data-target="#settingsModal">
+                ℹ️
+            </span>
+        </div>
         <div class="search-container">
             <input id="left-search" class="input" type="text" placeholder="Search with Google"
                 aria-label="Search with Google" autofocus>
@@ -161,23 +43,17 @@
     <div class="modal fade" id="settingsModal" tabindex="-1" role="dialog" aria-labelledby="settingsModalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="settingsModalLabel">Settings</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
+               
                 <div class="modal-body">
-                            <h1 style="text-align: center">🔍🎉</h1>
                         
                             <div class="section">
-                                <h2>Left Search Engines</h2>
+                                <div class="setting-heading">Left Search Engines</div>
                                 <div class="search-engine-item">
                                     <div class="engine-row">
                                         <input type="radio" name="left-engine" id="google" checked onchange="updateEnabledStatus(this, 'left')">
                                         <label for="google">Google</label>
                                         <input class="shortcut-input" type="text" value="//g" size="5">
-                                        <button onclick="deleteCustomSearch(this)" style="display: none; flex:none">X</button>
+                                        <button class="btn-danger" onclick="deleteCustomSearch(this)" style="display: none; flex:none;">X</button>
                                         <span class="enabled-status left-enabled" style="color: green;">Enabled</span>
                                     </div>
                                     <input class="engine-query-input" type="text" value="https://www.google.com/search?q=" style="width: 100%;" isCustom="true">
@@ -213,13 +89,13 @@
                             </div>
                         
                             <div class="section">
-                                <h2>Right Search Engines</h2>
+                                <div class="setting-heading">Right Search Engines</div>
                                 <div class="search-engine-item">
                                     <div class="engine-row">
                                         <input type="radio" name="right-engine" id="chatgpt" checked
                                             onchange="updateEnabledStatus(this, 'right')">
                                         <label for="chatgpt">ChatGPT</label>
-                                        <input type="text" value="//gpt" size="5">
+                                        <input class="shortcut-input"  type="text" value="//gpt" size="5">
                                         <button onclick="deleteCustomSearch(this)" style="display: none; flex:none">X</button>
                                         <span class="enabled-status right-enabled" style="color: green;">Enabled</span>
                                     </div>
@@ -253,7 +129,7 @@
                             </script>
                         
                             <div class="section advanced-settings">
-                                <h2>Advanced Settings</h2>
+                                <div class="setting-heading">Advanced Settings</div>
                                 <div class="input-row">
                                     <input type="text" placeholder="Search Engine Name" style="flex-grow: 1;">
                                     <input type="text" placeholder="Shortcut" style="flex-grow: 1;">
@@ -267,10 +143,7 @@
                                 </div>
                             </div>
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary">Save changes</button>
-                </div>
+
             </div>
         </div>
     </div>
