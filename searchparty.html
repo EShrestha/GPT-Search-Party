@@ -46,102 +46,33 @@
                
                 <div class="modal-body">
                         
-                            <div class="section">
-                                <div class="setting-heading">Left Search Engines</div>
-                                <div class="search-engine-item">
-                                    <div class="engine-row">
-                                        <input type="radio" name="left-engine" id="google" checked onchange="updateEnabledStatus(this, 'left')">
-                                        <label for="google">Google</label>
-                                        <input class="shortcut-input" type="text" value="//g" size="5">
-                                        <button class="btn-danger" onclick="deleteCustomSearch(this)" style="display: none; flex:none;">X</button>
-                                        <span class="enabled-status left-enabled" style="color: green;">Enabled</span>
-                                    </div>
-                                    <input class="engine-query-input" type="text" value="https://www.google.com/search?q=" style="width: 100%;" isCustom="true">
-                                </div>
-                                <div class="search-engine-item">
-                                    <div class="engine-row">
-                                        <input type="radio" name="left-engine" id="bing" onchange="updateEnabledStatus(this, 'left')">
-                                        <label for="bing">Bing</label>
-                                        <input class="shortcut-input" type="text" value="//b" size="5">
-                                        <span class="enabled-status left-enabled" style="color: green; display: none;">Enabled</span>
-                                    </div>
-                                    <input class="engine-query-input" type="text" value="https://www.bing.com/search?" style="width: 100%;">
-                                </div>
-                                <div class="search-engine-item">
-                                    <div class="engine-row">
-                                        <input type="radio" name="left-engine" id="yahoo" onchange="updateEnabledStatus(this, 'left')">
-                                        <label for="yahoo">Yahoo</label>
-                                        <input class="shortcut-input" type="text" value="//y" size="5">
-                                        <span class="enabled-status left-enabled" style="color: green; display: none;">Enabled</span>
-                                    </div>
-                                    <input class="engine-query-input" type="text" value="https://www.yahoo.com/search?" style="width: 100%;">
-                                </div>
-                                <div class="search-engine-item">
-                                    <div class="engine-row">
-                                        <input type="radio" name="left-engine" id="duckduckgo" onchange="updateEnabledStatus(this, 'left')">
-                                        <label for="duckduckgo">Duck Duck Go</label>
-                                        <input class="shortcut-input" type="text" value="//d" size="5">
-                                        <span class="enabled-status left-enabled" style="color: green; display: none;">Enabled</span>
-                                    </div>
-                                    <input class="engine-query-input" type="text" value="https://www.bing.com/search?" style="width: 100%;">
-                                </div>
-                                <!-- More left search engines will be added dynamically -->
-                            </div>
+                    <div class="section left-engines">
+                        <div class="setting-heading">Left Search Engines</div>
                         
-                            <div class="section">
-                                <div class="setting-heading">Right Search Engines</div>
-                                <div class="search-engine-item">
-                                    <div class="engine-row">
-                                        <input type="radio" name="right-engine" id="chatgpt" checked
-                                            onchange="updateEnabledStatus(this, 'right')">
-                                        <label for="chatgpt">ChatGPT</label>
-                                        <input class="shortcut-input"  type="text" value="//gpt" size="5">
-                                        <button onclick="deleteCustomSearch(this)" style="display: none; flex:none">X</button>
-                                        <span class="enabled-status right-enabled" style="color: green;">Enabled</span>
-                                    </div>
-                                    <input type="text" value="https://chat.openai.com/?" style="width: 100%;" isCustom="true">
-                                </div>
-                                <!-- More right search engines will be added dynamically -->
-                            </div>
+                    </div>
                         
-                            <script>
-                                function updateEnabledStatus(radio, side) {
-                                    // Hide all enabled status indicators for the given side
-                                    document.querySelectorAll(`.${side}-enabled`).forEach(span => {
-                                        span.style.display = 'none';
-                                    });
-
-                                    // Show the enabled status for the selected radio
-                                    const selectedRow = radio.closest('.engine-row');
-                                    const enabledSpan = selectedRow.querySelector(`.${side}-enabled`);
-                                    enabledSpan.style.display = 'inline';
-                                }
-
-                                // Update the delete button visibility based on isCustom attribute
-                                document.querySelectorAll('.search-engine-item').forEach(item => {
-                                    const isCustom = item.querySelector('input[type="text"][isCustom="true"]');
-                                    const deleteButton = item.querySelector('button');
-
-                                    if (isCustom) {
-                                        deleteButton.style.display = 'inline'; // Show delete button if isCustom is true
-                                    }
-                                });
-                            </script>
+                
+                    <div class="section right-engines">
+                        <div class="setting-heading">Right Search Engines</div>
                         
-                            <div class="section advanced-settings">
-                                <div class="setting-heading">Advanced Settings</div>
-                                <div class="input-row">
-                                    <input type="text" placeholder="Search Engine Name" style="flex-grow: 1;">
-                                    <input type="text" placeholder="Shortcut" style="flex-grow: 1;">
-                                </div>
-                                <div class="input-row">
-                                    <input type="text" placeholder="Query URL" style="flex-grow: 1;">
-                                </div>
-                                <div class="button-row">
-                                    <button>Add to Left</button>
-                                    <button>Add to Right</button>
-                                </div>
-                            </div>
+                    </div>
+                        
+
+                        
+                    <div class="section advanced-settings">
+                        <div class="setting-heading">Add Custom Engine</div>
+                        <div class="input-row">
+                            <input id="addEngineName" class="setting-input" type="text" placeholder="Search Engine Name" style="flex-grow: 1;">
+                            <input id="addEngineShortcut" class="setting-input" type="text" placeholder="Shortcut" style="flex-grow: 1;">
+                        </div>
+                        <div class="input-row">
+                            <input id="addEngineURL" class="setting-input" type="text" placeholder="Query URL" style="flex-grow: 1;">
+                        </div>
+                        <div class="button-row">
+                            <button id="addToLeft" class="setting-button" onclick="addCustomEngine(0)">Add to Left</button>
+                            <button id="addToRight" class="setting-button" onclick="addCustomEngine(1)">Add to Right</button>
+                        </div>
+                    </div>
                 </div>
 
             </div>
@@ -150,6 +81,7 @@
 
 </body>
 <script src="search-engine.js"></script>
+<script src="settings.js"></script>
 <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
 

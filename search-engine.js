@@ -6,52 +6,103 @@ var termToSearch = "";
 //////// DEFAULT ITEMS ////////
 var searchEngines = [
   {
+    id: 1000,
     name: "Google",
     url: "https://www.google.com/search?q=",
     shortcut: "//g",
     position: 0,
     isCustom: false,
-    isEnabled: false,
-  },
-  {
-    name: "Bing",
-    url: "https://www.bing.com/search?q=",
-    shortcut: "//b",
-    position: 0,
-    isCustom: false,
-    isEnabled: false,
-  },
-  {
-    name: "Yahoo",
-    url: "https://search.yahoo.com/search?p=",
-    shortcut: "//y",
-    position: 0,
-    isCustom: false,
-    isEnabled: false,
-  },
-  {
-    name: "Duck Duck Go",
-    url: "https://duckduckgo.com/?q=",
-    shortcut: "//d",
-    position: 0,
-    isCustom: false,
-    isEnabled: false,
-  },
-  {
-    name: "Yandex",
-    url: "https://yandex.com/search/?text=",
-    shortcut: "//ya",
-    position: 0,
-    isCustom: false,
     isEnabled: true,
   },
   {
+    id: 1001,
+    name: "Bing",
+    url: "https://www.bing.com/search?q=",
+    shortcut: "//bin",
+    position: 0,
+    isCustom: false,
+    isEnabled: false,
+  },
+  {
+    id: 1002,
+    name: "Yahoo",
+    url: "https://search.yahoo.com/search?p=",
+    shortcut: "//yah",
+    position: 0,
+    isCustom: false,
+    isEnabled: false,
+  },
+  {
+    id: 1003,
+    name: "Duck Duck Go",
+    url: "https://duckduckgo.com/?q=",
+    shortcut: "//ddg",
+    position: 0,
+    isCustom: false,
+    isEnabled: false,
+  },
+  {
+    id: 1004,
+    name: "Yandex",
+    url: "https://yandex.com/search/?text=",
+    shortcut: "//yan",
+    position: 0,
+    isCustom: false,
+    isEnabled: false,
+  },
+  {
+    id: 1005,
     name: "ChatGPT",
     url: "https://chat.openai.com/?q=",
     shortcut: "//gpt",
     position: 1,
     isCustom: false,
     isEnabled: true,
+  },
+  {
+    id: 1006,
+    name: "Claude.ai",
+    url: "https://claude.ai/new?q=",
+    shortcut: "//cl",
+    position: 1,
+    isCustom: false,
+    isEnabled: false,
+  },
+  {
+    id: 1007,
+    name: "Copilot",
+    url: "https://www.bing.com/search?showconv=1&sendquery=0&q=",
+    shortcut: "//co",
+    position: 1,
+    isCustom: false,
+    isEnabled: false,
+  },
+  {
+    id: 1008,
+    name: "Mistral.ai",
+    url: "https://chat.mistral.ai/chat?q=",
+    shortcut: "//mis",
+    position: 1,
+    isCustom: false,
+    isEnabled: false,
+  },
+  {
+    id: 1009,
+    name: "YouTube",
+    url: "https://www.youtube.com/results?search_query=",
+    shortcut: "//yt",
+    position: 1,
+    isCustom: false,
+    isEnabled: false,
+  },
+  {
+    id: 1010,
+    name: "Google Maps",
+    url: "http://maps.google.com/?q=",
+    shortcut: "//gm",
+    position: 1,
+    isCustom: false,
+    isEnabled: false,
   },
 ];
 
@@ -68,7 +119,6 @@ const getPageReady = async () => {
   getAndPushCustomSearchEngines();
 
     searchEngines.forEach((engine) => {
-      console.log("LOOKING AT ENGINE:", engine)
     if (engine.isEnabled) {
       if (engine.position === 0) {
           currentLeftSearch = engine;
@@ -82,7 +132,9 @@ const getPageReady = async () => {
           
       }
     }
-  });
+    });
+  
+  populateEngines(searchEngines)
 };
 
 // Handles the tab switch between the two search inputs
