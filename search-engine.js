@@ -110,32 +110,48 @@ var currentLeftSearch = searchEngines[0];
 var currentRightSearch = searchEngines[1];
 
 // Get any custom search engines from the storage
-const getAndPushCustomSearchEngines = async () => {
-    const customSearchEngines = await chrome.storage.local.get("searchEngines");
-    searchEngines = customSearchEngines.Engines || searchEngines;
+const getEnginesFromStorage = async () => {
+  await chrome.storage.local.get(["searchEngines"], (value) => {
+      searchEngines = value.searchEngines || searchEngines;
+      updatePageEngines();
+      populateEnginesInSettings(searchEngines);
+    });
 };
+
+// Function to save search engines to storage
+const saveEnginesToStorage = async () => {
+  await chrome.storage.local.set({ "searchEngines": searchEngines }, () => {
+    populateEnginesInSettings(searchEngines)
+
+  });
+  
+};
+
+
 
 const getPageReady = async () => {
-  getAndPushCustomSearchEngines();
+  await getEnginesFromStorage();
+  
+  
+};
 
-    searchEngines.forEach((engine) => {
+const updatePageEngines = () => {
+  searchEngines.forEach((engine) => {
     if (engine.isEnabled) {
       if (engine.position === 0) {
-          currentLeftSearch = engine;
-          updatePlaceholderText(0, "Search with " + engine.name)
-          console.log("LEFT", currentLeftSearch)
+        currentLeftSearch = engine;
+        updatePlaceholderText(0, "Search with " + engine.name);
+        console.log("LEFT", currentLeftSearch);
       } else {
-          currentRightSearch = engine;
-            updatePlaceholderText(1, "Search with " + engine.name)
-
-          console.log("RIGHT", currentRightSearch);
-          
+        currentRightSearch = engine;
+        updatePlaceholderText(1, "Search with " + engine.name);
+        
+        console.log("RIGHT", currentRightSearch);
       }
     }
-    });
-  
-  populateEngines(searchEngines)
-};
+  });
+  console.log("updatePageEngines", searchEngines);
+}
 
 // Handles the tab switch between the two search inputs
 function handleTabSwitch(fromInput, toInput, toDefaultPlaceholder, placeholderText) {
@@ -162,26 +178,86 @@ const updatePlaceholderText = (index, text) => {
     }
 }
 
+const getSearchInputs = () => {
+  return [leftSearchInput, rightSearchInput];
+}
+
+const getSearchUrls = () => {
+  return [currentLeftSearch.url, currentRightSearch.url]
+}
+
+const getOppositeInputs = () => {
+  return [rightSearchInput, leftSearchInput];
+}
+
+const showToast = (type, msg, duration) => {
+    // Create a toast element
+    const toast = document.createElement('div');
+    toast.className = `toast`; // Add the type class for styling
+    toast.style.position = 'fixed';
+    toast.style.bottom = '-100px'; // Start off-screen
+    toast.style.left = '50%';
+    toast.style.transform = 'translateX(-50%)';
+    toast.style.zIndex = '1050'; // Bootstrap toast z-index
+    toast.style.fontSize = '1.5rem'; // Increase font size for better readability
+    toast.style.backgroundColor = 'rgba(30, 30, 30, 0.9)'; // Set background color to a lighter dark theme
+    toast.style.padding = '15px 25px'; // Increase padding for better spacing
+    toast.style.borderRadius = '20px'; // Increase border radius for a more modern and roundish look
+    toast.style.transition = 'bottom 0.5s ease'; // Add transition for sliding effect
+  toast.style.textAlign = 'center'; // Center the toast text horizontally
+  toast.style.maxWidth = "100%";
+
+    const toastBody = document.createElement('div');
+    toastBody.className = 'toast-body';
+
+    if (type === 0) {
+        toastBody.style.color = 'green'; // Set text color to green for success
+    } else if (type === 1) {
+        toastBody.style.color = 'red'; // Set text color to red for danger
+    } else {
+        toastBody.style.color = 'white'; // Set text color to white for other types
+    }
+
+    toastBody.textContent = msg;
+    toast.appendChild(toastBody);
+
+    // Append the toast to the body
+    document.body.appendChild(toast);
+
+    // Show the toast by sliding it up
+    setTimeout(() => {
+        toast.style.bottom = '20px'; // Slide up to visible position
+    }, 10); // Small delay to allow the toast to be added to the DOM
+
+    // Remove the toast after the specified duration
+    setTimeout(() => {
+        toast.style.bottom = '-100px'; // Slide down to off-screen
+        setTimeout(() => {
+            toast.remove();
+        }, 500); // Wait for the slide-down animation to complete
+    }, duration);
+};
+
+// Example usage
+// showToast('bg-success', 'This is a success message!', 3000); // 3 seconds
+// showToast('bg-danger', 'This is an error message!', 3000); // 3 seconds
+
 // Wait for the DOM to be fully loaded
 document.addEventListener("DOMContentLoaded", () => {
   getPageReady();
 
-  const searchInputs = [leftSearchInput, rightSearchInput];
-  const searchUrls = [currentLeftSearch.url, currentRightSearch.url];
-  const oppositeInputs = [rightSearchInput, leftSearchInput];
-
-  searchInputs.forEach((input, index) => {
+  getSearchInputs().forEach((input, index) => {
     input.addEventListener("keydown", (event) => {
       switch (event.key) {
         case "Enter":
-          const url = searchUrls[index] + encodeURIComponent(input.value);
-          window.location.href = url;
+          const url = getSearchUrls()[index] + encodeURIComponent(input.value);
+          window.location.href = url; 
           break;
         case "Tab":
           event.preventDefault();
           handleTabSwitch(
             input,
-            oppositeInputs[index],
+            getOppositeInputs()[index],
             index === 0
               ? "Search with " + currentRightSearch.name
               : "Search with " + currentLeftSearch.name,
@@ -191,11 +267,11 @@ document.addEventListener("DOMContentLoaded", () => {
           );
           break;
           default:
-              oppositeInputs[index].placeholder =
+              getOppositeInputs()[index].placeholder =
                 index === 0
                 ? "⬅️ Searching with " + currentLeftSearch.name
                       : "Searching with " + currentRightSearch.name + " ➡️"
-              searchInputs[index].placeholder = ""
+              getSearchInputs()[index].placeholder = ""
 
           break;
         }

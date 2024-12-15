@@ -8,6 +8,8 @@
     <link rel="stylesheet" href="searchparty.css">
     <link rel="stylesheet" href="settings-info.css">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <script src="/libs/jquery-3.2.1.slim.min.js"></script>
+    <script src="/libs/bootstrap.min.js"></script>
 
 </head>
 
@@ -19,11 +21,12 @@
         </div>
         <div class="settings-info">
 
-            <span data-toggle="modal" data-target="#settingsModal">
-                ⚙️
-            </span>
+
             <span  data-toggle="modal" data-target="#settingsModal">
                 ℹ️
+            </span>
+            <span data-toggle="modal" data-target="#settingsModal">
+                ⚙️
             </span>
         </div>
         <div class="search-container">
@@ -69,8 +72,8 @@
                             <input id="addEngineURL" class="setting-input" type="text" placeholder="Query URL" style="flex-grow: 1;">
                         </div>
                         <div class="button-row">
-                            <button id="addToLeft" class="setting-button" onclick="addCustomEngine(0)">Add to Left</button>
-                            <button id="addToRight" class="setting-button" onclick="addCustomEngine(1)">Add to Right</button>
+                            <button id="addToLeft" class="setting-button" ">Add to Left</button>
+                            <button id="addToRight" class="setting-button" ">Add to Right</button>
                         </div>
                     </div>
                 </div>
@@ -80,9 +83,7 @@
     </div>
 
 </body>
-<script src="search-engine.js"></script>
-<script src="settings.js"></script>
-<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+<script src="search-engine.js" defer></script>
+<script src="settings.js" defer></script>
 
 </html>
