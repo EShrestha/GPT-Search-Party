@@ -16,7 +16,7 @@
 <body>
     <main class="container">
         <div class="logo-container">
-            <h1 class="logo-text">🔍🎉</h1>
+            <h1 id="title" class="logo-text">🔍🎉</h1>
             <p class="byline">by Airdik</p>
         </div>
         <div class="settings-info">
@@ -49,16 +49,27 @@
                
                 <div class="modal-body">
                         
-                    <div class="section left-engines">
-                        <div class="setting-heading">Left Search Engines</div>
-                        
+                    <div class="section">
+                        <div class="setting-heading" data-toggle="collapse" data-target="#leftEnginesContent" aria-expanded="false" aria-controls="leftEnginesContent">
+                            Left Search Engines
+                            <span class="collapse-icon" aria-hidden="true">⬇️ <span class="collapse-text">open</span></span>
+                        </div>
+                        <div class="left-engines collapse" id="leftEnginesContent">
+                            <!-- Content for left engines will go here -->
+                        </div>
                     </div>
                         
                 
-                    <div class="section right-engines">
-                        <div class="setting-heading">Right Search Engines</div>
-                        
+                    <div class="section">
+                        <div class="setting-heading" data-toggle="collapse" data-target="#rightEnginesContent" aria-expanded="false" aria-controls="rightEnginesContent">
+                            Right Search Engines
+                            <span class="collapse-icon" aria-hidden="true">⬇️ <span class="collapse-text">open</span></span>
+                        </div>
+                        <div class="right-engines collapse" id="rightEnginesContent">
+                            <!-- Content for right engines will go here -->
+                        </div>
                     </div>
+
                         
 
                         
@@ -74,6 +85,10 @@
                         <div class="button-row">
                             <button id="addToLeft" class="setting-button" ">Add to Left</button>
                             <button id="addToRight" class="setting-button" ">Add to Right</button>
+                        </div>
+
+                        <div id="resetDiv">
+                            <button id="resetToDefault" class="btn-danger">Reset All Settings</button>
                         </div>
                     </div>
                 </div>

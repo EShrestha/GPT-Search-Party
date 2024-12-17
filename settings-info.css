@@ -12,8 +12,13 @@
     flex-direction: row;
 }
 
+.collapse-icon{
+    cursor: pointer;
+}
 
-
+.collapse-text{
+    font-size: 10px;
+}
 
 .modal-content {
     padding: 10px;
@@ -118,8 +123,21 @@ button:hover {
     color: #d4d4d4;
     font-weight: bolder;
     margin-top: 35px;
+    cursor: pointer;
 }
 
+#resetDiv{
+    display: flex;
+    margin-top: 20px;
+    justify-content: center;
+}
+#resetToDefault{
+    max-width: 50%;
+    font-weight: bold;
+    padding: 15px;
+    border-radius: 15px;
+    font-size: 18px;
+}
 
 label{
     color: white;

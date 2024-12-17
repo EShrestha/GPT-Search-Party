@@ -3,10 +3,10 @@ const addEngineShortcut = document.getElementById("addEngineShortcut");
 const addEngineURL = document.getElementById("addEngineURL");
 const addToLeft = document.getElementById("addToLeft");
 const addToRight = document.getElementById("addToRight");
+const resetToDefault = document.getElementById("resetToDefault");
 
 function updateEnabledStatus(radio, side) {
   // Hide all enabled status indicators for the given side
-  console.log("radio,side:", radio, side);
   document.querySelectorAll(`.${side}-enabled`).forEach((span) => {
     span.style.display = "none";
   });
@@ -14,21 +14,39 @@ function updateEnabledStatus(radio, side) {
   // Show the enabled status for the selected radio
   const selectedRow = radio.closest(".engine-row");
   const enabledSpan = selectedRow.querySelector(`.${side}-enabled`);
-  console.log("selectedRow", selectedRow);
-  console.log("enabledSpan", enabledSpan);
   enabledSpan.style.display = "inline";
 
   const searchEngineItem = radio.closest(".search-engine-item");
   const engineId = searchEngineItem.id;
 
-  console.log("updating status for:", engineId);
   updateEngineIsEnabled(engineId, side === "left" ? 0 : 1);
+}
+
+async function updateEngineShortcut(input) {
+  const searchEngineItem = input.closest(".search-engine-item");
+  const engineId = searchEngineItem.id;
+  const newShortcut = input.value;
+
+  // Find the engine in the searchEngines array and update its shortcut
+  const engineToUpdate = searchEngines.find((engine) => engine.id == engineId);
+  if (engineToUpdate) {
+    engineToUpdate.shortcut = newShortcut;
+    await saveEnginesToStorage();
+    updatePageEngines();
+  }
 }
 
 const updateEngineIsEnabled = async (engineId, position) => {
   searchEngines.forEach((engine) => {
     if (engine.id == engineId) {
       engine.isEnabled = true;
+      if (engine.isDisgusting) {
+        showToast(
+          0,
+          '<img src="https://c.tenor.com/FCiTPRPl8VIAAAAd/tenor.gif" alt="Disgusting Engine" style="width: 100%;"/>',
+          12000
+        );
+      }
     } else if (engine.position === position) {
       engine.isEnabled = false;
     }
@@ -36,10 +54,6 @@ const updateEngineIsEnabled = async (engineId, position) => {
 
   await saveEnginesToStorage();
   updatePageEngines();
-};
-
-const deleteEngine = (engineId) => {
-  searchEngines = searchEngines.filter((engine) => engine.id !== engineId);
 };
 
 // Update the delete button visibility based on isCustom attribute
@@ -56,11 +70,29 @@ async function deleteCustomSearch(button) {
   const searchEngineItem = button.closest(".search-engine-item");
   const idToRemove = searchEngineItem.id;
 
+  // Check if the engine to remove is currently enabled
+  const engineToRemove = searchEngines.find(
+    (engine) => engine.id == idToRemove
+  );
+  const wasEnabled = engineToRemove && engineToRemove.isEnabled;
+
   searchEngines = searchEngines.filter((engine) => engine.id != idToRemove);
   console.log("Deleted search engine ID:", idToRemove);
   console.log("AFTER DELETE:", searchEngines);
 
+  // If the removed engine was enabled, enable the first engine in the same position
+  if (wasEnabled) {
+    const firstEngineInPosition = searchEngines.find(
+      (engine) => engine.position === engineToRemove.position
+    );
+    if (firstEngineInPosition) {
+      firstEngineInPosition.isEnabled = true; // Enable the first engine in the same position
+    }
+  }
+
   await saveEnginesToStorage();
+  const engineName = engineToRemove ? engineToRemove.name : "the engine"; // Get the name of the removed engine
+  showToast(0, `Successfully removed ${engineName}`); // Show toast notification
 }
 
 function populateEnginesInSettings(engines) {
@@ -181,10 +213,10 @@ const addCustomEngine = async (position) => {
   } else {
     searchEngines.push(engine); // add engine to inmem array
     await saveEnginesToStorage();
-      showToast(0, "Added new engine!", 3000);
-  addEngineName.value = '';
-  addEngineURL.value = '';
-  addEngineShortcut.value = '';
+    showToast(0, "Added new engine!", 3000);
+    addEngineName.value = "";
+    addEngineURL.value = "";
+    addEngineShortcut.value = "";
   }
 };
 
@@ -195,3 +227,4 @@ const refreshSettingsEngines = () => {
 
 addToLeft.onclick = () => addCustomEngine(0);
 addToRight.onclick = () => addCustomEngine(1);
+resetToDefault.onclick = () => resetToDefaultSettings();

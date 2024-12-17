@@ -1,15 +1,16 @@
+const title = document.getElementById("title");
 const leftSearchInput = document.getElementById("left-search");
 const rightSearchInput = document.getElementById("right-search");
 
 var termToSearch = "";
 
 //////// DEFAULT ITEMS ////////
-var searchEngines = [
+const defaultEngines = [
   {
     id: 1000,
     name: "Google",
     url: "https://www.google.com/search?q=",
-    shortcut: "//g",
+    shortcut: ";g",
     position: 0,
     isCustom: false,
     isEnabled: true,
@@ -18,25 +19,27 @@ var searchEngines = [
     id: 1001,
     name: "Bing",
     url: "https://www.bing.com/search?q=",
-    shortcut: "//bin",
+    shortcut: ";bin",
     position: 0,
     isCustom: false,
     isEnabled: false,
+    isDisgusting: true,
   },
   {
     id: 1002,
     name: "Yahoo",
     url: "https://search.yahoo.com/search?p=",
-    shortcut: "//yah",
+    shortcut: ";yah",
     position: 0,
     isCustom: false,
     isEnabled: false,
+    isDisgusting: true,
   },
   {
     id: 1003,
     name: "Duck Duck Go",
     url: "https://duckduckgo.com/?q=",
-    shortcut: "//ddg",
+    shortcut: ";ddg",
     position: 0,
     isCustom: false,
     isEnabled: false,
@@ -45,7 +48,7 @@ var searchEngines = [
     id: 1004,
     name: "Yandex",
     url: "https://yandex.com/search/?text=",
-    shortcut: "//yan",
+    shortcut: ";yan",
     position: 0,
     isCustom: false,
     isEnabled: false,
@@ -54,7 +57,7 @@ var searchEngines = [
     id: 1005,
     name: "ChatGPT",
     url: "https://chat.openai.com/?q=",
-    shortcut: "//gpt",
+    shortcut: ";gpt",
     position: 1,
     isCustom: false,
     isEnabled: true,
@@ -63,7 +66,7 @@ var searchEngines = [
     id: 1006,
     name: "Claude.ai",
     url: "https://claude.ai/new?q=",
-    shortcut: "//cl",
+    shortcut: ";cl",
     position: 1,
     isCustom: false,
     isEnabled: false,
@@ -72,7 +75,7 @@ var searchEngines = [
     id: 1007,
     name: "Copilot",
     url: "https://www.bing.com/search?showconv=1&sendquery=0&q=",
-    shortcut: "//co",
+    shortcut: ";co",
     position: 1,
     isCustom: false,
     isEnabled: false,
@@ -81,7 +84,7 @@ var searchEngines = [
     id: 1008,
     name: "Mistral.ai",
     url: "https://chat.mistral.ai/chat?q=",
-    shortcut: "//mis",
+    shortcut: ";mis",
     position: 1,
     isCustom: false,
     isEnabled: false,
@@ -90,28 +93,80 @@ var searchEngines = [
     id: 1009,
     name: "YouTube",
     url: "https://www.youtube.com/results?search_query=",
-    shortcut: "//yt",
+    shortcut: ";yt",
     position: 1,
     isCustom: false,
     isEnabled: false,
   },
   {
     id: 1010,
+    name: "Reddit",
+    url: "https://www.reddit.com/search?q=",
+    shortcut: ";it",
+    position: 1,
+    isCustom: false,
+    isEnabled: false,
+  },
+  {
+    id: 1011,
+    name: "Twitch",
+    url: "https://www.twitch.tv/search?term=",
+    shortcut: ";tw",
+    position: 1,
+    isCustom: false,
+    isEnabled: false,
+  },
+  {
+    id: 1012,
     name: "Google Maps",
     url: "http://maps.google.com/?q=",
-    shortcut: "//gm",
+    shortcut: ";gm",
     position: 1,
     isCustom: false,
     isEnabled: false,
   },
 ];
 
+const changingTitles = [
+  "🫵😈",
+  "🔍🎉",
+  "💡🤔",
+  "🛠️⚙️",
+  "💔🩹",
+  "🛌💤",
+  "⏰💣",
+  "👩‍💻☕📚 ",
+  "🛒💳🎁",
+  "🎈🎂🎉",
+  "📆🕰️🗓️",
+  "🎧🎤🎶💃",
+  "🔑🚪🕵️‍♂️🧩",
+  "🕹️🎮👾💥",
+  "🍷🍝🕯️🎻",
+  "🛌🕰️☕💻📑",
+  "🍳🥓🍞☕🍊",
+  "👩‍🚀🪐🚀🔭🌌",
+  "🚶‍♂️🌳🏞️⛺🔥",
+];
+
+const setRandomTitle = () => {
+  const randomIndex = Math.floor(Math.random() * changingTitles.length);
+  title.innerHTML = changingTitles[randomIndex];
+};
+
+setTimeout(() => {
+  setRandomTitle();
+  setInterval(setRandomTitle, 5000); // Change title every 5 seconds
+}, 15000); // Initial change after 15 seconds
+
+var searchEngines = [...defaultEngines];
+
 var currentLeftSearch = searchEngines[0];
 var currentRightSearch = searchEngines[1];
 
 // Get any custom search engines from the storage
 const getEnginesFromStorage = async () => {
-  await chrome.storage.local.get(["searchEngines"], (value) => {
+  await chrome.storage.sync.get(["searchEngines"], (value) => {
       searchEngines = value.searchEngines || searchEngines;
       updatePageEngines();
       populateEnginesInSettings(searchEngines);
@@ -120,13 +175,18 @@ const getEnginesFromStorage = async () => {
 
 // Function to save search engines to storage
 const saveEnginesToStorage = async () => {
-  await chrome.storage.local.set({ "searchEngines": searchEngines }, () => {
-    populateEnginesInSettings(searchEngines)
-
+  await chrome.storage.sync.set({ "searchEngines": searchEngines }, () => {
+    populateEnginesInSettings(searchEngines);
   });
-  
 };
 
+const resetToDefaultSettings = async () => {
+  await chrome.storage.sync.clear(); // Clear all data in chrome storage
+  searchEngines = [...defaultEngines]; // Reset searchEngines to default
+  updatePageEngines(); // Update the page with default engines
+  populateEnginesInSettings(searchEngines); // Populate settings with default engines
+  showToast(0, `All Settings Reset`); // Show toast notification
+}
 
 
 const getPageReady = async () => {
@@ -190,7 +250,7 @@ const getOppositeInputs = () => {
   return [rightSearchInput, leftSearchInput];
 }
 
-const showToast = (type, msg, duration) => {
+const showToast = (type, msg, duration = 3000) => {
     // Create a toast element
     const toast = document.createElement('div');
     toast.className = `toast`; // Add the type class for styling
@@ -218,7 +278,7 @@ const showToast = (type, msg, duration) => {
         toastBody.style.color = 'white'; // Set text color to white for other types
     }
 
-    toastBody.textContent = msg;
+    toastBody.innerHTML = msg;
     toast.appendChild(toastBody);
 
     // Append the toast to the body
@@ -279,3 +339,40 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 });
+
+
+document.querySelectorAll('.setting-heading').forEach(heading => {
+  heading.addEventListener('click', function (event) {
+      event.stopPropagation(); // Prevent event bubbling
+      const icon = this.querySelector('.collapse-icon');
+      const isExpanded = this.getAttribute('aria-expanded') === 'true';
+
+      // Toggle the aria-expanded attribute
+      this.setAttribute('aria-expanded', !isExpanded);
+      
+      // Toggle the collapse class
+      const content = this.nextElementSibling; // Get the corresponding content div
+      if (isExpanded) {
+          content.classList.remove('show'); // Collapse the content
+          icon.innerHTML = `⬇️ <span class="collapse-text">open</span>`; // Update icon text
+      } else {
+          content.classList.add('show'); // Expand the content
+          icon.innerHTML = `⬆️ <span class="collapse-text">close</span>`; // Update icon text
+      }
+  });
+});
+
+// Add event listener to collapse-text spans
+document.querySelectorAll('.collapse-text').forEach(collapseText => {
+  collapseText.addEventListener('click', function (event) {
+      event.stopPropagation(); // Prevent the click from bubbling up to the heading
+      const heading = this.closest('.setting-heading');
+      heading.click(); // Trigger the click event on the heading
+  });
+});
+
+document.querySelectorAll('.shortcut-input').forEach(input => {
+  input.addEventListener("onchange", (e) => {
+    updateEngineShortcut(input); 
+  })
+})
