@@ -95,7 +95,7 @@ async function deleteCustomSearch(button) {
   showToast(0, `Successfully removed ${engineName}`); // Show toast notification
 }
 
-function populateEnginesInSettings(engines) {
+function populateEnginesInSettings(engines, engineToFocus, shortcutOrQuery) {
   refreshSettingsEngines();
   console.log("HERE:", engines);
   const leftSection = document.querySelector(".left-engines"); // Left Search Engines section
@@ -147,7 +147,7 @@ function populateEnginesInSettings(engines) {
     }`;
 
     const queryInput = document.createElement("input");
-    queryInput.className = "setting-input";
+    queryInput.className = "setting-input query-input";
     queryInput.type = "text";
     queryInput.value = engine.url;
     queryInput.style.width = "100%";
@@ -171,14 +171,79 @@ function populateEnginesInSettings(engines) {
       rightSection.appendChild(searchEngineItem);
     }
   });
+
+  if (engineToFocus) {
+    if (shortcutOrQuery == 0) {
+      console.log("LOOKING FOR:", engineToFocus);
+      document
+        .getElementById(engineToFocus)
+        .querySelector(".shortcut-input")
+        .focus();
+    } else if (shortcutOrQuery == 1) {
+      document
+        .getElementById(engineToFocus)
+        .querySelector(".query-input")
+        .focus();
+    }
+  }
+
+  document.querySelectorAll(".shortcut-input").forEach((input) => {
+    console.log("Changing shortcut:", input);
+    input.addEventListener("input", async () => {
+      console.log("input received");
+      const engineId = input.closest(".search-engine-item").id;
+      if (input.value.trim() == "" || !input.value.trim().startsWith(";")) {
+        showToast(1, "Shortcut has to start with ;", 6000);
+        input.value = searchEngines.find(
+          (engine) => engine.id == engineId
+        ).shortcut;
+      } else {
+        if (input.value.length < 2) {
+          showToast(
+            1,
+            "Shortcut must have at least one character after the ;",
+            6000
+          );
+          return;
+        }
+        const engineToUpdate = searchEngines.find(
+          (engine) => engine.id == engineId
+        );
+        if (engineToUpdate) {
+          engineToUpdate.shortcut = input.value; // Change the shortcut to input.value
+        }
+        await saveEnginesToStorage(engineId, 0);
+      }
+    });
+  });
+
+  document.querySelectorAll(".query-input").forEach((input) => {
+    input.addEventListener("input", async () => {
+      const engineId = input.closest(".search-engine-item").id;
+      if (input.value.trim() == "" || input.value.trim().length < 5) {
+        showToast(1, "Query url is looking a little fishy", 6000);
+
+        return;
+      } else {
+        
+        const engineToUpdate = searchEngines.find(
+          (engine) => engine.id == engineId
+        );
+        if (engineToUpdate) {
+          engineToUpdate.url = input.value; // Change the query to input.value
+        }
+        await saveEnginesToStorage(engineId, 1); // Pass 1 for query
+      }
+    });
+  });
 }
 
 const addCustomEngine = async (position) => {
   let engine = {
     id: Math.floor(Math.random() * 10000), // Generates a random numerical id
-    name: addEngineName.value,
-    url: addEngineURL.value,
-    shortcut: addEngineShortcut.value,
+    name: addEngineName.value.trim(),
+    url: addEngineURL.value.trim(),
+    shortcut: addEngineShortcut.value.trim(),
     position: position,
     isCustom: true,
     isEnabled: false,
@@ -192,7 +257,20 @@ const addCustomEngine = async (position) => {
     showToast(1, "Please fill in all the fields.", 3000);
     return;
   }
-  // Check if an engine with the same URL exists
+
+  // Check if shortcut starts with ';' and is at least 2 characters long
+  if (!engine.shortcut.startsWith(";") || engine.shortcut.length < 2) {
+    showToast(1, "Shortcut must start with ';' and have at least one character after it.", 6000);
+    return;
+  }
+
+  // Check if URL is at least 5 characters long
+  if (engine.url.length < 5) {
+    showToast(1, "Query URL is looking a little fishy.", 3000);
+    return;
+  }
+
+  // Check if an engine with the same name, shortcut, or URL exists
   if (
     searchEngines.some((existingEngine) => existingEngine.name == engine.name)
   ) {
@@ -218,6 +296,14 @@ const addCustomEngine = async (position) => {
     addEngineURL.value = "";
     addEngineShortcut.value = "";
   }
+};
+
+const addShortcutChangeHandler = async () => {
+  // Add change event listeners to all shortcut inputs
+};
+
+const addQueryChangeHandler = () => {
+  // Add change event listeners to all shortcut inputs
 };
 
 const refreshSettingsEngines = () => {
