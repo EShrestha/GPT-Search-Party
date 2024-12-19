@@ -105,6 +105,44 @@ input.input:focus {
     border-bottom-right-radius: 30px;
 }
 
+.introjs-tooltip {
+    background-color: #353538 !important;
+    color: #d4d4d4 !important;
+    border-radius: 10px !important;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5) !important;
+}
+
+.introjs-tooltip .introjs-arrow {
+    border-color: #252526 transparent transparent transparent !important;
+}
+
+.introjs-tooltip .introjs-title {
+    font-weight: bold !important;
+    font-size: 1.2rem !important;
+}
+
+.introjs-tooltip .introjs-content {
+    font-size: 1rem !important;
+}
+
+.introjs-closeButton {
+    color: #d4d4d4 !important;
+}
+
+.introjs-button {
+    background-color: #4a4a4a !important;
+    color: #d4d4d4 !important;
+    border: none !important;
+    border-radius: 5px !important;
+    padding: 10px 15px !important;
+    text-shadow: none !important;
+    
+}
+
+.introjs-button:hover {
+    background-color: #5a5a5a !important;
+}
+
 
 
 

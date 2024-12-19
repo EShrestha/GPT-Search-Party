@@ -179,7 +179,6 @@ const getEnginesFromStorage = async () => {
 const saveEnginesToStorage = async (engineToFocus, shortcutOrQuery) => {
   await chrome.storage.sync.set({ searchEngines: searchEngines }, () => {
     populateEnginesInSettings(searchEngines, engineToFocus, shortcutOrQuery);
-
   });
 };
 
@@ -212,7 +211,6 @@ const updatePageEngines = () => {
     }
   });
   console.log("updatePageEngines", searchEngines);
-
 };
 
 // Handles the tab switch between the two search inputs
@@ -309,6 +307,30 @@ const showToast = (type, msg, duration = 3000) => {
 // showToast('bg-success', 'This is a success message!', 3000); // 3 seconds
 // showToast('bg-danger', 'This is an error message!', 3000); // 3 seconds
 
+const customSearch = (searchUrl, searchTerm) => {
+  const regex = /^(?:([^;]+)\s)?(;[^\s]+)(?:\s(.+))?|(;[^\s]+)\s(.+)$/;
+  const match = searchTerm.match(regex);
+  const defaultRedirect = () => window.location.href = searchUrl + encodeURIComponent(searchTerm);
+
+  if (match) {
+    const command = match[2];
+    const query = match[1] || match[3];
+
+    if (command && query) {
+      console.log("Matched");
+      console.log("Command:", command);
+      console.log("Query:", query);
+
+      const engine = searchEngines.find(engine => engine.shortcut === command);
+      window.location.href = engine ? engine.url + encodeURIComponent(query) : defaultRedirect();
+    } else {
+      defaultRedirect();
+    }
+  } else {
+    defaultRedirect();
+  }
+};
+
 // Wait for the DOM to be fully loaded
 document.addEventListener("DOMContentLoaded", () => {
   getPageReady();
@@ -317,8 +339,9 @@ document.addEventListener("DOMContentLoaded", () => {
     input.addEventListener("keydown", (event) => {
       switch (event.key) {
         case "Enter":
-          const url = getSearchUrls()[index] + encodeURIComponent(input.value);
-          window.location.href = url;
+          // const url = getSearchUrls()[index] + encodeURIComponent(input.value);
+          // window.location.href = url;
+          customSearch(getSearchUrls()[index], input.value);
           break;
         case "Tab":
           event.preventDefault();
@@ -375,7 +398,3 @@ document.querySelectorAll(".collapse-text").forEach((collapseText) => {
     heading.click(); // Trigger the click event on the heading
   });
 });
-
-
-
-

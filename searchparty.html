@@ -8,8 +8,10 @@
     <link rel="stylesheet" href="searchparty.css">
     <link rel="stylesheet" href="settings-info.css">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/libs/introjs.min.css">
     <script src="/libs/jquery-3.2.1.slim.min.js"></script>
     <script src="/libs/bootstrap.min.js"></script>
+    <script src="/libs/intro.min.js"></script>
 
 </head>
 
@@ -22,18 +24,22 @@
         <div class="settings-info">
 
 
-            <span  data-toggle="modal" data-target="#settingsModal">
+            <span id="info-madal" data-toggle="modal" data-target="#settingsModal">
                 ℹ️
             </span>
-            <span data-toggle="modal" data-target="#settingsModal">
+            <span id="settings-modal" data-toggle="modal" data-target="#settingsModal">
                 ⚙️
             </span>
         </div>
         <div class="search-container">
-            <input id="left-search" class="input" type="text" placeholder="Search with Google"
+
+            <span id="left-right-search" style="display: flex; width: 100%;">
+
+                <input id="left-search" class="input" type="text" placeholder="Search with Google"
                 aria-label="Search with Google" autofocus>
-            <input id="right-search" class="input" type="text" placeholder="Search with ChatGPT"
+                <input id="right-search" class="input" type="text" placeholder="Search with ChatGPT"
                 aria-label="Search with ChatGPT">
+            </span>
         </div>
     </main>
 
@@ -47,10 +53,10 @@
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                
-                <div class="modal-body">
-                        
+                <div id="settings-modal-body" class="modal-body">
+                     <span id="engines-holder">  
                     <div class="section">
-                        <div class="setting-heading" data-toggle="collapse" data-target="#leftEnginesContent" aria-expanded="false" aria-controls="leftEnginesContent">
+                        <div id="leftExpand" class="setting-heading" data-toggle="collapse" data-target="#leftEnginesContent" aria-expanded="false" aria-controls="leftEnginesContent">
                             Left Search Engines
                             <span class="collapse-icon" aria-hidden="true">⬇️ <span class="collapse-text">open</span></span>
                         </div>
@@ -69,11 +75,13 @@
                             <!-- Content for right engines will go here -->
                         </div>
                     </div>
+                    </span>
 
                         
 
                         
                     <div class="section advanced-settings">
+                        <span id="custom-engines">
                         <div class="setting-heading">Add Custom Engine</div>
                         <div class="input-row">
                             <input id="addEngineName" class="setting-input" type="text" placeholder="Search Engine Name" style="flex-grow: 1;">
@@ -86,6 +94,7 @@
                             <button id="addToLeft" class="setting-button" ">Add to Left</button>
                             <button id="addToRight" class="setting-button" ">Add to Right</button>
                         </div>
+                        </span>
 
                         <div id="resetDiv">
                             <button id="resetToDefault" class="btn-danger">Reset All Settings</button>
@@ -100,5 +109,6 @@
 </body>
 <script src="search-engine.js" defer></script>
 <script src="settings.js" defer></script>
+<script src="onboard.js" defer></script>
 
 </html>

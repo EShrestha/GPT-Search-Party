@@ -104,114 +104,51 @@ chrome.tabs.onCreated.addListener(function (t) {
   O = !1;
 });
 
-// chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
-//   if (changeInfo.url) {
-//     console.log("User attempted to navigate to:", changeInfo.url);
-
-//     // Check if the URL is a search query or a specific pattern
-//     const googleSearchRegex = /https:\/\/www\.google\.com\/search\?q=(.*)/;
-//     const match = changeInfo.url.match(googleSearchRegex);
-
-//     if (match) {
-//       const query = decodeURIComponent(match[1]);
-//       console.log("Search query intercepted:", query);
-
-//       // Prevent navigation by redirecting
-//       chrome.tabs.update(tabId, {
-//         url: `https://example.com/search?q=${encodeURIComponent(query)}`, // Your custom action
-//       });
-//     }
-//   }
-// });
-// chrome.declarativeNetRequest.updateDynamicRules({
-//   addRules: [
-//     {
-//       id: 1,
-//       priority: 1,
-//       action: {
-//         type: "redirect",
-//         redirect: {
-//           regexSubstitution: "https://example.com/search?q=\\1",
-//         },
-//       },
-//       condition: {
-//         regexFilter: "https://www.google.com/search\\?.*q=([^&]+).*",
-//         resourceTypes: ["main_frame"],
-//       },
-//     },
-//   ],
-//   removeRuleIds: [1],
-// });
 
 chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
   if (changeInfo.url) {
     const url = new URL(changeInfo.url);
     const queryParams = new URLSearchParams(url.search);
-    const rawQuery = queryParams.get('q'); // Get the raw query parameter before URL encoding
+    const rawQuery = queryParams.get("q"); // Get the raw query parameter before URL encoding
 
     console.log("URL:", url);
     console.log("queryParams:", queryParams);
     console.log("Raw Search Query:", rawQuery);
 
+    if (!rawQuery) { return;   }
     const regex = /^(?:([^;]+)\s)?(;[^\s]+)(?:\s(.+))?|(;[^\s]+)\s(.+)$/;
     const match = rawQuery.match(regex);
     console.log("Match:", match);
 
     if (match) {
-      
       const command = match[2];
       const query = match[1] || match[3];
 
-      if (!(command && query)) { return; }
+      if (!(command && query)) {
+        return;
+      }
 
-      console.log("Matched")
-      console.log("Command:", command)
+      console.log("Matched");
+      console.log("Command:", command);
       console.log("Query:", query);
+
+      const { searchEngines } = await chrome.storage.sync.get(["searchEngines"]);
+      const engine = searchEngines.find(engine => engine.shortcut === command);
+
+      if (engine) {
+        console.log("Engine found:", engine);
+        chrome.tabs.update(tabId, {
+          url: engine.url + encodeURIComponent(query),
+        });
+      } else{
+        return;
+      }
+      
     }
 
     // Proceed with the rest of your logic using rawQuery
     return;
   }
-  if (changeInfo.url) {
-    console.log("Intercepted URL:", changeInfo.url);
-    const engines = await chrome.storage.sync.get(["searchEngines"]);
-
-    console.log("Engines:", engines);
-
-    const searchRegex = /[?&]q=([^&]*)/;
-    const match = changeInfo.url.match(searchRegex);
-
-    console.log("Match:", match);
-
-    if (match) {
-      let query = decodeURIComponent(match[1]); // Decode percent-encoded query
-
-      // Only replace + signs if they are meant to represent spaces (this avoids messing up queries like "2+3")
-      query = query.replace(/\+/g, " "); // Replace '+' with space
-
-      console.log("Decoded Search Query:", query);
-
-      // Updated command regex to capture only the command and query separately
-      const commandRegex = /(;[^\s]+)(?:\s+(.+))?/; // Capture command first, then optional query
-
-      const commandMatch = query.match(commandRegex);
-
-      if (commandMatch) {
-        const command = commandMatch[1]; // The command will be in group 1
-        const restOfQuery = (commandMatch[2] || "").trim(); // The rest of the query will be in group 2 (if any)
-
-        console.log("Command:", command, "Rest of Query:", restOfQuery);
-
-        // Redirect or handle the URL logic as needed
-        // chrome.tabs.update(tabId, {
-        //   url: "https://example.com/custom-command",
-        // });
-      } else {
-        console.log("No command detected. Proceeding with normal search.");
-      }
-    }
-  }
 });
-
 
 
