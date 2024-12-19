@@ -5,7 +5,7 @@ function startTour() {
       steps: [
         {
           intro:
-            "Welcome to the Search Party!<br/><br/>Let's take a quick tour 😊",
+            "Welcome to the Search Party!<br/><br/>Let's take a quick tour. 🥳🎈",
         },
         {
           element: "#left-search",
@@ -13,7 +13,7 @@ function startTour() {
         },
         {
           element: "#right-search",
-          intro: "You guessed it, right engine on this side!",
+          intro: "You guessed it,</br>right engine on this side!",
         },
         {
           element: "#left-right-search",
@@ -105,7 +105,7 @@ function startModalTour() {
         },
         {
           element: "#settings-modal-body",
-          intro: "As you can see,<br/>this is the settings page",
+          intro: "As you can see,<br/>this is the settings page.",
         },
         {
           element: "#engines-holder",
@@ -114,21 +114,22 @@ function startModalTour() {
         },
         {
           intro:
-            "Woah! who did that?!</br></br>Are you using telekinesis?? 🤨</br></br>Well... since we're here let me take you through this section 🤷‍♂️ ",
+            "Woah! Who did that?!</br></br>Are you using telekinesis?? 🤨</br></br>Well... since we're here let me take you through this section 🤷‍♂️ ",
         },
         {
+          element: "#settingsModal",
           intro:
-            "Here you can see the all the engines you have.</br></br>You can switch to a different engine by clicking the radio button next to the name.",
+            "Here you can see all the engines you have.</br></br>You can switch to a different engine by clicking the radio button next to the name.",
         },
         {
           element: ".shortcut-input",
           intro:
-            "This is the shortcut for a particular engine</br></br>Change it to your liking, BUT it MUST start with \";\"</br></br>You can use an engines shortcut to search with that engine even if it's not enabled!</br></br>Keep that in mind, I'll show you in a little bit!",
+            "This is the shortcut for a particular engine.</br></br>Change it to your liking, BUT it MUST start with \";\"</br></br>You can use an engines shortcut to search with that engine even if it's not enabled!</br></br>Keep that in mind, I'll show you in a little bit!",
         },
         {
           element: ".query-input",
           intro:
-            "This the query url for a particular engine. It is what is used to search with that engine.</br></br>I don't recommend changing the default ones.",
+            "This is the query url for a particular engine. The engine uses this to search.</br></br>I don't recommend changing the default ones.",
         },
         {
           element: "#custom-engines",
@@ -142,15 +143,27 @@ function startModalTour() {
         {
           element: "#left-search",
           intro:
-            "Here you have Google enabled, but what if you want to use youtube?</br></br>Well you can simply do [shortcut] [What you want to search]</br>or</br>[What you want to search] [shortcut]</br></br>For Example:</br>;yt cute dogs</br>or</br>cute dogs ;yt",
+            "Here you have Google enabled, but what if you want to use youtube?</br></br>Well, follow me 🏃‍♀️‍➡️",
+        },
+        {
+          element: "#left-search",
+          intro:
+            "You can simply do</br>[terms] [shortcut]</br>or</br>[shortcut] [terms]",
+        },
+        {
+          element: "#left-right-search",
+          intro:
+            "For Example:</br></br>cute dogs ;yt</br>or</br>;yt cute dogs</br></br>;yt is currently set for YouTube</br>but you can use any shortcut.",
         },
         {
           element: "#right-search",
           intro: "Shortcuts work here too!",
         },
         {
-          element: ".container",
-          intro: "Shortcuts even work in your browsers address bar up here!!!",
+          element: "#top-placeholder",
+          intro:
+            "👆👆👆👆👆👆</br>Even way up here in you browsers address bar!!</br>Try it sometime.",
+          //intro: "<div style='position: fixed; top: 0; left: 50%; transform: translateX(-50%);'>⬆️ Even way up here in you browsers address bar!!</br>Try it sometime.</div>",
         },
       ],
       tooltipClass: "centered-tooltip bold-tooltip introjs-closeButton", // Add a custom class for centering and bold text
@@ -193,6 +206,13 @@ function startModalTour() {
         if (exitModal) {
           exitModal.click();
         }
+      }
+
+      if (currentStep === 10) {
+        const leftInput = document.querySelector("#left-search");
+        const rightInput = document.querySelector("#right-search");
+        leftInput.value = "cute dogs ;yt";
+        rightInput.value = ";yt cute dogs";
       }
     })
     .start();
