@@ -134,6 +134,16 @@ const defaultEngines = [
     isCustom: false,
     isEnabled: false,
   },
+    {
+    id: 1014,
+    name: "Amazon",
+    url: "https://www.amazon.com/s?k=",
+    shortcut: ";am",
+    position: 1,
+    isCustom: false,
+    isEnabled: false,
+  },
+
 ];
 
 const changingTitles = [

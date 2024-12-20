@@ -190,7 +190,7 @@ function startModalTour() {
         },
         {
           intro:
-            "Well this is the end 🥺</br></br>Tell you family, friends, pets, and strangers about SearchParty 😚</br></br>Happy searching!!!",
+            "Well this is the end 🥺</br></br>Tell your family, friends, pets, and strangers about SearchParty 😚</br></br>Happy searching!!!",
           //intro: "<div style='position: fixed; top: 0; left: 50%; transform: translateX(-50%);'>⬆️ Even way up here in you browsers address bar!!</br>Try it sometime.</div>",
         },
       ],
