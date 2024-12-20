@@ -129,14 +129,17 @@ button:hover {
 #resetDiv{
     display: flex;
     margin-top: 20px;
-    justify-content: center;
+    justify-content: space-evenly;
 }
-#resetToDefault{
-    max-width: 50%;
+.reset-buttons{
+    max-width: 45%;
     font-weight: bold;
     padding: 15px;
     border-radius: 15px;
     font-size: 18px;
+    align-items: center;
+    justify-content: center;
+    
 }
 
 label{

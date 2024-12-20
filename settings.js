@@ -4,6 +4,7 @@ const addEngineURL = document.getElementById("addEngineURL");
 const addToLeft = document.getElementById("addToLeft");
 const addToRight = document.getElementById("addToRight");
 const resetToDefault = document.getElementById("resetToDefault");
+const resetOnboarding = document.getElementById("resetOnboarding");
 
 function updateEnabledStatus(radio, side) {
   // Hide all enabled status indicators for the given side
@@ -77,8 +78,7 @@ async function deleteCustomSearch(button) {
   const wasEnabled = engineToRemove && engineToRemove.isEnabled;
 
   searchEngines = searchEngines.filter((engine) => engine.id != idToRemove);
-  console.log("Deleted search engine ID:", idToRemove);
-  console.log("AFTER DELETE:", searchEngines);
+
 
   // If the removed engine was enabled, enable the first engine in the same position
   if (wasEnabled) {
@@ -91,18 +91,18 @@ async function deleteCustomSearch(button) {
   }
 
   await saveEnginesToStorage();
+  updatePageEngines();
+
   const engineName = engineToRemove ? engineToRemove.name : "the engine"; // Get the name of the removed engine
   showToast(0, `Successfully removed ${engineName}`); // Show toast notification
 }
 
 function populateEnginesInSettings(engines, engineToFocus, shortcutOrQuery) {
   refreshSettingsEngines();
-  console.log("HERE:", engines);
   const leftSection = document.querySelector(".left-engines"); // Left Search Engines section
   const rightSection = document.querySelector(".right-engines"); // Right Search Engines section
 
   engines.forEach((engine) => {
-    console.log("LOOKING AT ENGINE IN POP:", engine);
     // Create the search engine item structure
     const searchEngineItem = document.createElement("div");
     searchEngineItem.id = engine.id;
@@ -174,7 +174,6 @@ function populateEnginesInSettings(engines, engineToFocus, shortcutOrQuery) {
 
   if (engineToFocus) {
     if (shortcutOrQuery == 0) {
-      console.log("LOOKING FOR:", engineToFocus);
       document
         .getElementById(engineToFocus)
         .querySelector(".shortcut-input")
@@ -188,9 +187,7 @@ function populateEnginesInSettings(engines, engineToFocus, shortcutOrQuery) {
   }
 
   document.querySelectorAll(".shortcut-input").forEach((input) => {
-    console.log("Changing shortcut:", input);
     input.addEventListener("input", async () => {
-      console.log("input received");
       const engineId = input.closest(".search-engine-item").id;
       if (input.value.trim() == "" || !input.value.trim().startsWith(";")) {
         showToast(1, "Shortcut has to start with ;", 6000);
@@ -225,7 +222,6 @@ function populateEnginesInSettings(engines, engineToFocus, shortcutOrQuery) {
 
         return;
       } else {
-        
         const engineToUpdate = searchEngines.find(
           (engine) => engine.id == engineId
         );
@@ -260,7 +256,11 @@ const addCustomEngine = async (position) => {
 
   // Check if shortcut starts with ';' and is at least 2 characters long
   if (!engine.shortcut.startsWith(";") || engine.shortcut.length < 2) {
-    showToast(1, "Shortcut must start with ';' and have at least one character after it.", 6000);
+    showToast(
+      1,
+      "Shortcut must start with ';' and have at least one character after it.",
+      6000
+    );
     return;
   }
 
@@ -298,14 +298,6 @@ const addCustomEngine = async (position) => {
   }
 };
 
-const addShortcutChangeHandler = async () => {
-  // Add change event listeners to all shortcut inputs
-};
-
-const addQueryChangeHandler = () => {
-  // Add change event listeners to all shortcut inputs
-};
-
 const refreshSettingsEngines = () => {
   const items = document.querySelectorAll(".search-engine-item");
   items.forEach((item) => item.remove());
@@ -314,3 +306,11 @@ const refreshSettingsEngines = () => {
 addToLeft.onclick = () => addCustomEngine(0);
 addToRight.onclick = () => addCustomEngine(1);
 resetToDefault.onclick = () => resetToDefaultSettings();
+resetOnboarding.onclick = () => {
+  // Clear the cookie
+  setCookie("onboarded", "false"); // or use an expiration date to delete it
+  // Clear the Chrome storage
+  chrome.storage.sync.remove("onboarded", function () {
+    window.location.reload();
+  });
+};

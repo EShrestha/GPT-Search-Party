@@ -143,7 +143,9 @@ input.input:focus {
     background-color: #5a5a5a !important;
 }
 
-
+.introjs-disableInteraction {
+    opacity: .08 !important;
+}
 
 
 

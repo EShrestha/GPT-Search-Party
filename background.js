@@ -69,7 +69,7 @@ function c(t, e, r, n, o, i, u) {
 
 chrome.tabs.onCreated.addListener(function (t) {
   O &&
-    (console.log("onCreated"),
+    (console.log(""),
     (function (t) {
       if (P.includes(t.id)) return null;
       s(function* () {
@@ -111,14 +111,11 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
     const queryParams = new URLSearchParams(url.search);
     const rawQuery = queryParams.get("q"); // Get the raw query parameter before URL encoding
 
-    console.log("URL:", url);
-    console.log("queryParams:", queryParams);
-    console.log("Raw Search Query:", rawQuery);
+
 
     if (!rawQuery) { return;   }
     const regex = /^(?:([^;]+)\s)?(;[^\s]+)(?:\s(.+))?|(;[^\s]+)\s(.+)$/;
     const match = rawQuery.match(regex);
-    console.log("Match:", match);
 
     if (match) {
       const command = match[2];
@@ -128,15 +125,11 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
         return;
       }
 
-      console.log("Matched");
-      console.log("Command:", command);
-      console.log("Query:", query);
 
       const { searchEngines } = await chrome.storage.sync.get(["searchEngines"]);
       const engine = searchEngines.find(engine => engine.shortcut === command);
 
       if (engine) {
-        console.log("Engine found:", engine);
         chrome.tabs.update(tabId, {
           url: engine.url + encodeURIComponent(query),
         });
