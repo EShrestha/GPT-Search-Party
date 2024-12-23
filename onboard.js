@@ -153,7 +153,7 @@ function startModalTour() {
         {
           element: "#resetToDefault",
           intro:
-            "If you ever mess something up or want to delete all of you custom engines...</br></br>Press this shiny red button.",
+            "If you ever mess something up or want to delete all of your custom engines...</br></br>Press this shiny red button.",
         },
         {
           element: "#resetOnboarding",

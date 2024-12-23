@@ -1,15 +1,19 @@
 let P = [];
+let O = false;
+let searchPartyUrl = `chrome-extension://${chrome.runtime.id}/searchparty.html`;
 
+// Handle fetch events
 self.addEventListener("fetch", function (t) {
   var e = t.request.url;
   e.startsWith(location.origin + "/searchparty.html") &&
     !e.match("focus") &&
-    ((O = !0),
+    ((O = true),
     setTimeout(function () {
-      O = !1;
+      O = false;
     }, 50));
 });
 
+// Helper functions
 function l(t, e) {
   return new Promise(function (r) {
     return s("tabs")
@@ -67,9 +71,9 @@ function c(t, e, r, n, o, i, u) {
   a.done ? e(c) : Promise.resolve(c).then(n, o);
 }
 
+// Handle tab creation logic
 chrome.tabs.onCreated.addListener(function (t) {
   O &&
-    (console.log(""),
     (function (t) {
       if (P.includes(t.id)) return null;
       s(function* () {
@@ -82,38 +86,31 @@ chrome.tabs.onCreated.addListener(function (t) {
         l &&
           chrome.tabs.create(
             {
-              url: "".concat(
-                "chrome-extension://".concat(
-                  chrome.runtime.id,
-                  "/searchparty.html"
-                ),
-                "?focus=true"
-              ),
-              active: !0,
+              url: `${searchPartyUrl}?focus=true`,
+              active: true,
             },
             function (e) {
-              P.unshift(e.id),
-                P.splice(100),
-                chrome.tabs.remove(t.id),
-                chrome.tabs.update(e.id, {
-                  url: "chrome://newtab/",
-                });
+              P.unshift(e.id);
+              P.splice(100);
+              chrome.tabs.remove(t.id);
+              chrome.tabs.update(e.id, { url: "chrome://newtab/" });
             }
           );
-    })(t));
-  O = !1;
+    })(t);
+  O = false;
 });
 
-
+// Handle query modification
 chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
   if (changeInfo.url) {
     const url = new URL(changeInfo.url);
     const queryParams = new URLSearchParams(url.search);
-    const rawQuery = queryParams.get("q"); // Get the raw query parameter before URL encoding
+    const rawQuery = queryParams.get("q");
 
+    if (!rawQuery) {
+      return;
+    }
 
-
-    if (!rawQuery) { return;   }
     const regex = /^(?:([^;]+)\s)?(;[^\s]+)(?:\s(.+))?|(;[^\s]+)\s(.+)$/;
     const match = rawQuery.match(regex);
 
@@ -125,23 +122,62 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
         return;
       }
 
-
-      const { searchEngines } = await chrome.storage.sync.get(["searchEngines"]);
-      const engine = searchEngines.find(engine => engine.shortcut === command);
+      const { searchEngines } = await chrome.storage.sync.get([
+        "searchEngines",
+      ]);
+      const engine = searchEngines.find(
+        (engine) => engine.shortcut === command
+      );
 
       if (engine) {
         chrome.tabs.update(tabId, {
           url: engine.url + encodeURIComponent(query),
         });
-      } else{
+      } else {
         return;
       }
-      
     }
-
-    // Proceed with the rest of your logic using rawQuery
-    return;
   }
 });
 
+// Handle extension installation
+chrome.runtime.onInstalled.addListener(() => {
+  chrome.tabs.create({ url: searchPartyUrl });
+});
 
+// Open searchparty.html when a new window is created
+chrome.windows.onCreated.addListener((window) => {
+  if (window.type === "normal") {
+    chrome.tabs.query({ windowId: window.id }, (tabs) => {
+      if (tabs.length === 1 && tabs[0].url === "chrome://newtab/") {
+        chrome.tabs.update(tabs[0].id, { url: searchPartyUrl });
+      }
+    });
+  }
+});
+
+// Handle Chrome startup
+chrome.runtime.onStartup.addListener(() => {
+  chrome.tabs.query({}, (tabs) => {
+    if (tabs.length === 0) {
+      chrome.tabs.create({ url: searchPartyUrl });
+    } else {
+      tabs.forEach((tab) => {
+        if (tab.url === "chrome://newtab/" || tab.url === "about:blank") {
+          chrome.tabs.update(tab.id, { url: searchPartyUrl });
+        }
+      });
+    }
+  });
+});
+
+// Prevent multiple searchparty.html tabs
+chrome.tabs.onCreated.addListener((tab) => {
+  if (tab.url === searchPartyUrl) {
+    chrome.tabs.query({ url: searchPartyUrl }, (tabs) => {
+      if (tabs.length > 1) {
+        chrome.tabs.remove(tab.id);
+      }
+    });
+  }
+});

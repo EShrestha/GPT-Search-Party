@@ -594,8 +594,8 @@ const getEnginesFromStorage = async () => {
     searchEngines = value.searchEngines || searchEngines;
     updatePageEngines();
     populateEnginesInSettings(searchEngines);
-    addShortcutChangeHandler();
-    addQueryChangeHandler();
+    // addShortcutChangeHandler();
+    // addQueryChangeHandler();
   });
 };
 
