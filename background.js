@@ -142,7 +142,8 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
 
 // Handle extension installation
 chrome.runtime.onInstalled.addListener(() => {
-  chrome.tabs.create({ url: searchPartyUrl });
+  chrome.tabs.create({ url: "chrome://newtab/" }, (tab) => {
+  });
 });
 
 // Open searchparty.html when a new window is created
@@ -158,18 +159,22 @@ chrome.windows.onCreated.addListener((window) => {
 
 // Handle Chrome startup
 chrome.runtime.onStartup.addListener(() => {
-  chrome.tabs.query({}, (tabs) => {
-    if (tabs.length === 0) {
-      chrome.tabs.create({ url: searchPartyUrl });
+  chrome.windows.getAll({ populate: true }, (windows) => {
+    if (windows.length === 0) {
+      // If no windows are open, create one with the custom page
+      chrome.windows.create({ url: searchPartyUrl });
     } else {
-      tabs.forEach((tab) => {
-        if (tab.url === "chrome://newtab/" || tab.url === "about:blank") {
-          chrome.tabs.update(tab.id, { url: searchPartyUrl });
-        }
-      });
+      const alreadyOpen = windows.some((win) =>
+        win.tabs.some((tab) => tab.url === searchPartyUrl)
+      );
+
+      if (!alreadyOpen) {
+        chrome.tabs.create({ url: searchPartyUrl });
+      }
     }
   });
 });
+''
 
 // Prevent multiple searchparty.html tabs
 chrome.tabs.onCreated.addListener((tab) => {

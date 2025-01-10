@@ -1,4 +1,4 @@
-const title = document.getElementById("title");
+const title = document.getElementById("sp-title");
 const leftSearchInput = document.getElementById("left-search");
 const rightSearchInput = document.getElementById("right-search");
 
