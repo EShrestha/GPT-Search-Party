@@ -7,13 +7,22 @@ var termToSearch = "";
 //////// DEFAULT ITEMS ////////
 const defaultEngines = [
   {
+    id: 0,
+    name: "Browser Default Engine",
+    url: "Your Default Engine",
+    shortcut: ";default",
+    position: 0,
+    isCustom: false,
+    isEnabled: true,
+  },
+  {
     id: 1000,
     name: "Google",
     url: "https://www.google.com/search?q=",
     shortcut: ";g",
     position: 0,
     isCustom: false,
-    isEnabled: true,
+    isEnabled: false,
   },
   {
     id: 1001,
@@ -134,7 +143,7 @@ const defaultEngines = [
     isCustom: false,
     isEnabled: false,
   },
-    {
+  {
     id: 1014,
     name: "Amazon",
     url: "https://www.amazon.com/s?k=",
@@ -143,7 +152,6 @@ const defaultEngines = [
     isCustom: false,
     isEnabled: false,
   },
-
 ];
 
 const changingTitles = [
@@ -664,10 +672,21 @@ const updatePlaceholderText = (index, text) => {
   }
 };
 
+const getCurrentLeftEngine = () => {
+  return currentLeftSearch;
+}
+
+const getCurrentRightEngine = () => {
+  return currentRightSearch;
+};
+
 const getSearchInputs = () => {
   return [leftSearchInput, rightSearchInput];
 };
 
+const getInputEngines = () => {
+  return [getCurrentLeftEngine(), getCurrentRightEngine()];
+}
 const getSearchUrls = () => {
   return [currentLeftSearch.url, currentRightSearch.url];
 };
@@ -760,7 +779,17 @@ document.addEventListener("DOMContentLoaded", () => {
         case "Enter":
           // const url = getSearchUrls()[index] + encodeURIComponent(input.value);
           // window.location.href = url;
-          customSearch(getSearchUrls()[index], input.value);
+          if (getInputEngines()[index].id === 0) {
+            console.log("Trying to search with default")
+                      chrome.search.query({
+                        text: input.value,
+                        disposition: "CURRENT_TAB",
+                      });
+          } else {
+            customSearch(getSearchUrls()[index], input.value);
+            
+          }
+          
           break;
         case "Tab":
           event.preventDefault();

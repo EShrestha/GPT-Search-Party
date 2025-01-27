@@ -106,17 +106,24 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
     const url = new URL(changeInfo.url);
     const queryParams = new URLSearchParams(url.search);
     const rawQuery = queryParams.get("q");
+    console.log("queryParams", queryParams);
+    console.log("rawQuery", rawQuery);
+
 
     if (!rawQuery) {
+      console.log("rawQuery is null")
       return;
     }
 
     const regex = /^(?:([^;]+)\s)?(;[^\s]+)(?:\s(.+))?|(;[^\s]+)\s(.+)$/;
     const match = rawQuery.match(regex);
+    console.log("match:", match);
 
     if (match) {
       const command = match[2];
       const query = match[1] || match[3];
+      console.log("Command", command);
+      console.log("Query", query);
 
       if (!(command && query)) {
         return;
@@ -130,20 +137,37 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
       );
 
       if (engine) {
-        chrome.tabs.update(tabId, {
-          url: engine.url + encodeURIComponent(query),
-        });
+        console.log("ENGINE FOUND");
+        console.log("Engine ID", engine.id);
+        if (engine.id === 0) {
+          console.log("DEFAULT");
+          chrome.search.query({
+            text: query,
+            disposition: "CURRENT_TAB",
+          });
+        } else {
+          chrome.tabs.update(tabId, {
+            url: engine.url + encodeURIComponent(query),
+          });
+        }
       } else {
+        console.log("ENGINE NOT FOUND");
         return;
       }
+    } else {
+      console.log("inElse:rawQuery:", rawQuery);
+      chrome.search.query({
+        text: rawQuery,
+        disposition: "CURRENT_TAB",
+      });
+      return;
     }
   }
 });
 
 // Handle extension installation
 chrome.runtime.onInstalled.addListener(() => {
-  chrome.tabs.create({ url: "chrome://newtab/" }, (tab) => {
-  });
+  chrome.tabs.create({ url: "chrome://newtab/" }, (tab) => {});
 });
 
 // Open searchparty.html when a new window is created
@@ -174,7 +198,7 @@ chrome.runtime.onStartup.addListener(() => {
     }
   });
 });
-''
+("");
 
 // Prevent multiple searchparty.html tabs
 chrome.tabs.onCreated.addListener((tab) => {
